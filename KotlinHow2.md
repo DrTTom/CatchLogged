@@ -1,6 +1,6 @@
 # How I created my first Kotlin project
 
-This is not a tutorial, its just a list of questions I came across and how it can be done. 
+This is not a tutorial, its just a list of questions I came across and how it can be done.
 That is not necessarily how it should be done!
 
 ## How do I build?
@@ -10,21 +10,39 @@ It seems compatible enough with the application plugin. Remaining Question: Can 
 
 ## Hellow world 
 
-See class FirstStep.
+```kotlin 
+fun main(args: Array<String>): Unit {
+  val name: String = "TAU"
+  println(name)
+} 
+```
 
 ## Where to find the language definition
 
-https://kotlinlang.org/docs/reference/ might do.
+https://kotlinlang.org/docs/reference/ is comprehensive and seems to cover enough of the language.
 
 
 ## How do I get IDE support?
 
-TODO (Internet says Eclipse would do)
+Got an Eclipse plugin from https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html which 
+provides some syntax highlighting and breaks coding conventions with formatting. So what, its only the format.
+No Errors/Warnings or code completion, by the way. There is a new entry 'convert Java to Kotlin' in the 
+context menu but it does nothing. Want other IDE.
+
+Found online Java to Kotlin conversion at
+https://try.kotlinlang.org/#/Kotlin%20Koans/Introduction/Java%20to%20Kotlin%20conversion/Task.kt
+which works as expected, i.e. the generated code cannot be compiled. However, it was useful because generated stuff 
+was very easily turned into correct class.
+
+## Is there something like JavaDoc for Kotlin
+
+Yes and no. The tool is named Dokka but the repository link claimed in https://github.com/Kotlin/dokka/blob/master/README.md
+does not exist. So following the instructions will lead to an error.
 
 ## How do Kotlin classes integrate into Java Projects? 
 
-$Calling Java from Kotlin$
-TODO
+**Calling Java from Kotlin**
+No problems so far, just import and call as expected.
 
-$Calling Kotlin from Java$
-TODO
+**Calling Kotlin from Java**
+Note these special Kt - "classes" which seem to contain static stuff.
