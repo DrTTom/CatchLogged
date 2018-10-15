@@ -16,6 +16,7 @@ fun main(args: Array<String>): Unit {
   println(name)
 } 
 ```
+Note that "static" stuff must be done outside class.
 
 ## Where to find the language definition
 
@@ -26,7 +27,7 @@ https://kotlinlang.org/docs/reference/ is comprehensive and seems to cover enoug
 
 Got an Eclipse plugin from https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html which 
 provides some syntax highlighting and breaks coding conventions with formatting. So what, its only the format.
-No Errors/Warnings or code completion, by the way. There is a new entry 'convert Java to Kotlin' in the 
+No Errors/Warnings or Kotlin code completion, by the way. There is a new entry 'convert Java to Kotlin' in the 
 context menu but it does nothing. Want other IDE.
 
 Found online Java to Kotlin conversion at
@@ -46,3 +47,10 @@ No problems so far, just import and call as expected.
 
 **Calling Kotlin from Java**
 Note these special Kt - "classes" which seem to contain static stuff.
+
+## How does programming feel like?
+Lots of stuff can be left out because it is assumed implicitly by the compiler. Open source tooling is inacceptable.
+- implicit non null check is good
+- primary constructors are great in trivial cases
+- ranges in for loops look good
+Finding real advantages of the language seems to require some more experience, not just translation of Java ideas into Kotlin.
