@@ -50,7 +50,9 @@ Note these special Kt - "classes" which seem to contain static stuff.
 
 ## How does programming feel like?
 Lots of stuff can be left out because it is assumed implicitly by the compiler. Open source tooling is inacceptable.
+
 - implicit non null check is good
 - primary constructors are great in trivial cases
 - ranges in for loops look good
+
 Finding real advantages of the language seems to require some more experience, not just translation of Java ideas into Kotlin.

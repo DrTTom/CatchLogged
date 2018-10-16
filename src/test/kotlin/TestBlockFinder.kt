@@ -44,14 +44,27 @@ class TestBlockFinder() {
 		assertThat("line", found.line, equalTo(1))
 
 	}
-	
+
 	/**
-	 simple Test for capturing blocks using nested blocks.
-	 */ 
+	simple Test for capturing blocks using nested blocks.
+	 */
 	@Test
 	fun findBlocks() {
 		val javaData = "... catch (IOException | IllegalArgumentException e) { if (a==b) { something();} LOG.debug(\"ex\", e);}";
 		val systemUnderTest = BlockFinder(Language.JAVA);
 		assertThat("block", systemUnderTest.captureBlock(javaData, 0, '{', '}'), equalTo(" if (a==b) { something();} LOG.debug(\"ex\", e);"));
+	}
+
+	/**
+	Counts the usages of the exception
+	 */
+	@Test
+	fun countCalls() {
+		val block = CatchBlock(0, "e", " LOG.debug\n(\"caugth\", e); LOG.info(\"huhu\"); \nthrow new RuntimeException(e); \n  Utils.handle(e);")
+		val systemUnderTest = BlockFinder(Language.KOTLIN)
+		val counts = systemUnderTest.analyze(block);
+		assertThat("logged count", counts.logged, equalTo(1));
+		assertThat("throw count", counts.reThrown, equalTo(1));
+		assertThat("call count", counts.forwarded, equalTo(1));
 	}
 }
