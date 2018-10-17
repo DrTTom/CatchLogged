@@ -1,6 +1,7 @@
 package de.tautenhahn.catch
 
 import org.junit.Test;
+import java.nio.file.Paths;
 import org.junit.Assert.assertThat;
 import org.hamcrest.Matchers.equalTo;
 import org.hamcrest.Matchers.hasSize;
@@ -19,16 +20,16 @@ class TestBlockFinder() {
 		val source = "...} \n catch ( IOException e) \n {" + blocks.get(0) +
 				"}\n catch (RuntimeException|OutOfMemoryError t) {" + blocks.get(1) + "} ... "
 		val systemUnderTest = BlockFinder(Language.JAVA)
-		val findings: List<CatchBlock> = systemUnderTest.findCatchBlocks(source)
+		val findings: List<CatchBlock> = systemUnderTest.findCatchBlocks(source, Paths.get("dummy"))
 
 		assertThat("findings", findings, hasSize(2))
 		assertThat("varName", findings.get(0).varName, equalTo("e"))
 		assertThat("content", findings.get(0).content, equalTo(blocks.get(0)))
-		assertThat("line", findings.get(0).line, equalTo(2))
+		assertThat("line", findings.get(0).source.startLine, equalTo(2))
 
 		assertThat("varName", findings.get(1).varName, equalTo("t"))
 		assertThat("content", findings.get(1).content, equalTo(blocks.get(1)))
-		assertThat("line", findings.get(1).line, equalTo(4))
+		assertThat("line", findings.get(1).source.startLine, equalTo(4))
 	}
 
 	/**
@@ -37,11 +38,11 @@ class TestBlockFinder() {
 	fun findInKotlin() {
 		val source = "... catch ( exc: Exception) { // nothing }"
 		val systemUnderTest = BlockFinder(Language.KOTLIN)
-		val found: CatchBlock = systemUnderTest.findCatchBlocks(source).get(0);
+		val found: CatchBlock = systemUnderTest.findCatchBlocks(source, Paths.get("dummy")).get(0);
 
 		assertThat("varName", found.varName, equalTo("exc"))
 		assertThat("content", found.content, equalTo(" // nothing "))
-		assertThat("line", found.line, equalTo(1))
+		assertThat("line", found.source.startLine, equalTo(1))
 
 	}
 
@@ -60,7 +61,7 @@ class TestBlockFinder() {
 	 */
 	@Test
 	fun countCalls() {
-		val block = CatchBlock(0, "e", " LOG.debug\n(\"caugth\", e); LOG.info(\"huhu\"); \nthrow new RuntimeException(e); \n  Utils.handle(e);")
+		val block = CatchBlock(Location(Paths.get("dummy"), 0), "e", " LOG.debug\n(\"caugth\", e); LOG.info(\"huhu\"); \nthrow new RuntimeException(e); \n  Utils.handle(e);")
 		val systemUnderTest = BlockFinder(Language.KOTLIN)
 		val counts = systemUnderTest.analyze(block);
 		assertThat("logged count", counts.logged, equalTo(1));

@@ -2,6 +2,7 @@ package de.tautenhahn.catch
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.nio.file.Path
 
 /**
 Finds catch blocks in source codes of supported languages.
@@ -12,7 +13,7 @@ class BlockFinder(language: Language) {
 
 	init {
 		when (language) {
-			Language.JAVA, Language.C, Language.CPP -> catchPattern = Pattern.compile("\\bcatch *\\( *\\w+( *\\| *\\w+)* (\\w+) *\\)")
+			Language.JAVA, Language.CSHARP, Language.CPP -> catchPattern = Pattern.compile("\\bcatch *\\( *\\w+( *\\| *\\w+)* (\\w+) *\\)")
 			Language.KOTLIN -> catchPattern = Pattern.compile("\\bcatch *\\(( *)(\\w+) *: *\\w+ *\\)")
 			// note that there is a compiler warning on the Java-like default (here else) case, missing
 			// cases are detected by the compiler. What happens when somebody keeps this compiled class but extends Language? 
@@ -26,7 +27,7 @@ class BlockFinder(language: Language) {
 	/**
 	Returns a list of catch blocks found in the source code
 	 */
-	fun findCatchBlocks(source: String): List<CatchBlock> {
+	fun findCatchBlocks(source: String, path: Path): List<CatchBlock> {
 		val result: MutableList<CatchBlock> = mutableListOf()
 		val m: Matcher = catchPattern.matcher(source)
 		var line = 1;
@@ -40,7 +41,7 @@ class BlockFinder(language: Language) {
 				}
 			}
 			lastPos = m.end();
-			result.add(CatchBlock(line, varName, content))
+			result.add(CatchBlock(Location(path, line), varName, content))
 		}
 		return result;
 	}
@@ -98,7 +99,7 @@ class BlockFinder(language: Language) {
 			thrown++;
 		}
 
-		return ExUsage(logged, thrown, forwarded)
+		return ExUsage(block, logged, thrown, forwarded)
 	}
 
 }
