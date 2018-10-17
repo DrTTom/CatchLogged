@@ -17,7 +17,7 @@ class TestCatchAndLogReporter() {
 	@Test
 	fun checkOwnProject() {
 		val report = CatchAndLogReporter(Paths.get(".")).analyzeProject()
-		assertThat("report", report,hasSize(1))
+		assertThat("report", report,hasSize(2))
 	}
 
 }

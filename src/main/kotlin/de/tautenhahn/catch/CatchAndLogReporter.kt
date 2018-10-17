@@ -1,10 +1,12 @@
 package de.tautenhahn.catch
 
 import java.util.regex.Pattern
+import java.util.regex.Matcher
 import java.nio.file.Paths
 import java.nio.file.Path
 import java.nio.file.Files
 import java.util.stream.Stream
+import java.util.stream.StreamSupport
 import java.util.stream.Collectors
 
 /**
@@ -27,6 +29,7 @@ class CatchAndLogReporter(projectRoot: Path) {
 	val root = projectRoot
 
 	private val IGNORE_PATTERN = Pattern.compile("// (\\w+ )?(not logged|handled twice) because \\w+")
+	private val DECLARE_PATTERN = Pattern.compile("\\s(\\w+) = LoggerFactory.getLogger\\(([^)]+)\\)")
 
 	/**
 	 Returns a list of warnings found for that project
@@ -50,7 +53,9 @@ class CatchAndLogReporter(projectRoot: Path) {
 	}
 
 	internal fun checkFile(finder: BlockFinder, content: String, p: Path): Stream<Warning> {
-		return finder.findCatchBlocks(content, p).stream().map({ b -> assign(finder.analyze(b)) }).filter({ m -> m != null }).map({ x -> x as Warning })
+		val blockMessages = finder.findCatchBlocks(content, p).stream().map({ b -> assign(finder.analyze(b)) })
+		val categoryMessages = Stream.of(checkLogCategory(content, p)) 
+		return Stream.concat(blockMessages, categoryMessages).filter({ m -> m != null }).map({ x -> x as Warning })
 	}
 
 	internal fun assign(findings: ExUsage): Warning? {
@@ -67,5 +72,21 @@ class CatchAndLogReporter(projectRoot: Path) {
 					findings.forwarded + " x forwarded)"
 		}
 		return Warning(findings.block.source, msg);
+	}
+	
+	internal fun checkLogCategory(content: String, p : Path) : Warning?
+	{
+		// TODO: make log framework configurable
+		val m : Matcher = DECLARE_PATTERN.matcher(content);
+		if (m.find())
+			{
+				// TODO: could use logger name to make further analysis more flexible
+				val arg = m.group(2);
+				if (arg.endsWith(".class") && !arg.endsWith(p.getFileName().toString().replace(".java", ".class")))
+					{
+						return Warning(Location(p, -1), "potentially wrong category "+arg+" expected "+p.getFileName().toString()+".class");
+					}
+			}
+		return null;
 	}
 }

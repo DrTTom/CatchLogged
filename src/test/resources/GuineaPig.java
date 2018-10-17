@@ -1,5 +1,7 @@
 import java.util.logging.Logger;
 
+import org.slf4j.LoggerFactory;
+
 
 /**
  * No meaning here.
@@ -9,7 +11,8 @@ import java.util.logging.Logger;
 public class GuineaPig
 {
 
-  private static final Logger LOG = null;
+  // Wrong category on purpose:
+  private static final Logger LOG = LoggerFactory.getLogger(String.class);
 
   /**
    * does nothing useful
@@ -24,6 +27,7 @@ public class GuineaPig
     }
     catch (RuntimeException e)
     {
+      // Excessive use of information, on purpose:
       LOG.info("egal {}", "eee".length(), e);
       throw e;
       handleProblem("hallo", e);
